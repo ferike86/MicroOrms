@@ -12,7 +12,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5EB8E7CE-35F3-4AAF-B06B-6BE9FB25ED66}"
 	ProjectSection(SolutionItems) = preProject
 		CreateTodoDatabase.sql = CreateTodoDatabase.sql
-		CreateTodoItemsTable.sql = CreateTodoItemsTable.sql
+		CreateTodoItemTable.sql = CreateTodoItemTable.sql
+		CreateUserTable.sql = CreateUserTable.sql
+		InsertIntoUserTable.sql = InsertIntoUserTable.sql
 	EndProjectSection
 EndProject
 Global

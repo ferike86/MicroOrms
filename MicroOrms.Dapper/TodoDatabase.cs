@@ -6,11 +6,11 @@ namespace MicroOrms.Dapper
 {
     public class TodoDatabase : ITodoDatabase
     {
-        private static readonly string readAllCommand = "SELECT id Id, name Name, is_complete IsComplete FROM todo_items;";
-        private static readonly string readCommand = "SELECT id Id, name Name, is_complete IsComplete FROM todo_items WHERE id = @Id;";
-        private static readonly string deleteCommand = "DELETE FROM todo_items WHERE id = @Id;";
-        private static readonly string insertCommand = "INSERT INTO todo_items (name, is_complete) VALUES (@Name, @IsComplete);";
-        private static readonly string updateCommand = "UPDATE todo_items SET name = @NAME, is_complete = @IsComplete WHERE id = @Id;";
+        private static readonly string readAllCommand = "SELECT id Id, name Name, is_complete IsComplete, user_id UserId FROM todo_item;";
+        private static readonly string readCommand = "SELECT id Id, name Name, is_complete IsComplete, user_id UserId FROM todo_item WHERE id = @Id;";
+        private static readonly string deleteCommand = "DELETE FROM todo_item WHERE id = @Id;";
+        private static readonly string insertCommand = "INSERT INTO todo_item (name, is_complete, user_id) VALUES (@Name, @IsComplete, @UserId);";
+        private static readonly string updateCommand = "UPDATE todo_item SET name = @NAME, is_complete = @IsComplete, user_id = @UserId WHERE id = @Id;";
 
         private readonly string dbConnectionString;
 
@@ -24,7 +24,7 @@ namespace MicroOrms.Dapper
             using(var connection = new SqlConnection(dbConnectionString))
             {
                 connection.Execute(insertCommand, todoItem);
-                var createdTodoItem = connection.QueryFirst<TodoItem>("SELECT id Id, name Name, is_complete IsComplete FROM todo_items WHERE name = @Name and is_complete = @IsComplete", todoItem);
+                var createdTodoItem = connection.QueryFirst<TodoItem>("SELECT id Id, name Name, is_complete IsComplete, user_id UserId FROM todo_item WHERE name = @Name and is_complete = @IsComplete", todoItem);
                 return createdTodoItem.Id;
             }
         }
