@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Data.SqlClient;
-using AutoMapper;
+﻿using AutoMapper;
 using Dapper.Contrib.Extensions;
+using MicroOrms.Entities;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace MicroOrms.Dapper.Contrib
 {
-    public class TodoDatabase : ITodoDatabase
+    public class TodoDatabase : ICrudOperations<TodoItem>
     {
         private static readonly IConfigurationProvider mapperConfiguration;
         private static readonly IMapper mapper;
@@ -17,10 +18,10 @@ namespace MicroOrms.Dapper.Contrib
             {
                 config.CreateMap<DapperContribTodoItem, TodoItem>()
                 .ForMember(dest => dest.IsComplete, opt => opt.MapFrom(src => src.Is_Complete))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src=> src.User_Id));
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User_Id));
                 config.CreateMap<TodoItem, DapperContribTodoItem>()
                 .ForMember(dest => dest.Is_Complete, opt => opt.MapFrom(src => src.IsComplete))
-                .ForMember(dest => dest.User_Id, opt => opt.MapFrom(src=> src.UserId));
+                .ForMember(dest => dest.User_Id, opt => opt.MapFrom(src => src.UserId));
             });
             mapper = mapperConfiguration.CreateMapper();
         }

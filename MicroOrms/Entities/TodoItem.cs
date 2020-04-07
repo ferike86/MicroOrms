@@ -1,4 +1,4 @@
-﻿namespace MicroOrms
+﻿namespace MicroOrms.Entities
 {
     public class TodoItem
     {

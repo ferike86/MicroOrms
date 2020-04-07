@@ -54,7 +54,9 @@
     <Compile Include="Contrib\DapperContribTodoItem.cs" />
     <Compile Include="Contrib\TodoDatabase.cs" />
     <Compile Include="TodoDatabase.cs" />
+    <Compile Include="TodoItemOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserOperations.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MicroOrms\MicroOrms.csproj">

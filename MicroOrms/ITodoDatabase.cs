@@ -1,17 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using MicroOrms.Entities;
 
 namespace MicroOrms
 {
     public interface ITodoDatabase
     {
-        long Create(TodoItem todoItem);
+        ICrudOperations<User> Users { get; }
 
-        TodoItem Read(long id);
-
-        IEnumerable<TodoItem> ReadAll();
-
-        bool Update(TodoItem todoItem);
-
-        bool Delete(long id);
+        ICrudOperations<TodoItem> TodoItems { get; }
     }
 }
