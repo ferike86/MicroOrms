@@ -51,8 +51,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contrib\DapperContribTodoItem.cs" />
+    <Compile Include="Contrib\Entities\DapperContribTodoItem.cs" />
+    <Compile Include="Contrib\Entities\DapperContribUser.cs" />
+    <Compile Include="Contrib\Mappers\TodoItemMapper.cs" />
+    <Compile Include="Contrib\Mappers\UserMapper.cs" />
     <Compile Include="Contrib\TodoDatabase.cs" />
+    <Compile Include="Contrib\TodoItemOperations.cs" />
+    <Compile Include="Contrib\UserOperations.cs" />
     <Compile Include="TodoDatabase.cs" />
     <Compile Include="TodoItemOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,6 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 
-namespace MicroOrms.Dapper.Contrib
+namespace MicroOrms.Dapper.Contrib.Entities
 {
     [Table("todo_item")]
     internal class DapperContribTodoItem

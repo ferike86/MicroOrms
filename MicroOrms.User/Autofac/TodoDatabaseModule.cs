@@ -10,7 +10,7 @@ namespace MicroOrms.User.Autofac
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            var todoDatabase = new Dapper.TodoDatabase(DbConnectionString);
+            var todoDatabase = new Dapper.Contrib.TodoDatabase(DbConnectionString);
             builder.RegisterInstance(todoDatabase).As<ITodoDatabase>();
         }
     }
