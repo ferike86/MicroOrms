@@ -7,10 +7,26 @@ namespace MicroOrms.User.Autofac
     {
         private static string DbConnectionString => ConfigurationManager.ConnectionStrings["TodoDatabase"].ConnectionString;
 
+        public OrmType OrmType { get; set; } = OrmType.Dapper;
+
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            var todoDatabase = new Dapper.Contrib.TodoDatabase(DbConnectionString);
+
+            ITodoDatabase todoDatabase;
+
+            switch (OrmType)
+            {
+                case OrmType.Dapper:
+                    todoDatabase = new Dapper.TodoDatabase(DbConnectionString);
+                    break;
+                case OrmType.DapperContrib:
+                    todoDatabase = new Dapper.Contrib.TodoDatabase(DbConnectionString);
+                    break;
+                default:
+                    todoDatabase = new Dapper.TodoDatabase(DbConnectionString);
+                    break;
+            }
             builder.RegisterInstance(todoDatabase).As<ITodoDatabase>();
         }
     }

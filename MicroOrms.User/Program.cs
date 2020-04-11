@@ -10,17 +10,15 @@ namespace MicroOrms.User
     {
         private static IContainer Container { get; set; }
 
-        public static ITodoDatabase TodoDatabase => Container.Resolve<ITodoDatabase>();
+        private static OrmType OrmType { get; set; }
 
-        static Program()
-        {
-            var containerBuiler = new ContainerBuilder();
-            containerBuiler.RegisterModule(new TodoDatabaseModule());
-            Container = containerBuiler.Build();
-        }
+        public static ITodoDatabase TodoDatabase => Container.Resolve<ITodoDatabase>();
 
         static void Main(string[] args)
         {
+            HandleUserInput();
+            ConfigureOrm();
+
             PrintAllTodoItems(TodoDatabase.TodoItems.ReadAll());
             var createdId = TodoDatabase.TodoItems.Create(new TodoItem { Name = "Item1", IsComplete = false, UserId = 1 });
             var createdItem = TodoDatabase.TodoItems.Read(createdId);
@@ -53,6 +51,41 @@ namespace MicroOrms.User
             PrintAllTodoItems(TodoDatabase.TodoItems.ReadAll());
             PrintAllUsers(TodoDatabase.Users.ReadAll());
             Console.ReadKey();
+        }
+
+        private static void HandleUserInput()
+        {
+            Console.WriteLine("Select the ORM to use:");
+            foreach (var ormType in Enum.GetValues(typeof(OrmType)))
+            {
+                Console.WriteLine($"{(int)ormType} - {ormType}");
+            }
+
+            try
+            {
+                var userInput = Console.ReadLine();
+                var userInputAsInt = int.Parse(userInput);
+                if (Enum.IsDefined(typeof(OrmType), userInputAsInt))
+                {
+                    OrmType = (OrmType)Enum.ToObject(typeof(OrmType), userInputAsInt);
+                }
+                OrmType = OrmType.Dapper;
+            }
+            catch
+            {
+                OrmType = OrmType.Dapper;
+            }
+        }
+
+        private static void ConfigureOrm()
+        {
+            var containerBuiler = new ContainerBuilder();
+            var todoDataBaseModule = new TodoDatabaseModule
+            {
+                OrmType = OrmType
+            };
+            containerBuiler.RegisterModule(todoDataBaseModule);
+            Container = containerBuiler.Build();
         }
 
         private static void PrintTodoItem(TodoItem todoItem)
