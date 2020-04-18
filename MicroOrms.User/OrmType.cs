@@ -3,6 +3,7 @@
     public enum OrmType
     {
         Dapper,
-        DapperContrib
+        DapperContrib,
+        AdoNet
     }
 }

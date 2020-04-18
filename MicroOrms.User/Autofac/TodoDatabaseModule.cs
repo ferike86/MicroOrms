@@ -23,6 +23,9 @@ namespace MicroOrms.User.Autofac
                 case OrmType.DapperContrib:
                     todoDatabase = new Dapper.Contrib.TodoDatabase(DbConnectionString);
                     break;
+                case OrmType.AdoNet:
+                    todoDatabase = new AdoNet.TodoDatabase(DbConnectionString);
+                    break;
                 default:
                     todoDatabase = new Dapper.TodoDatabase(DbConnectionString);
                     break;

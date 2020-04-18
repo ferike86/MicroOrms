@@ -67,6 +67,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MicroOrms.AdoNet\MicroOrms.AdoNet.csproj">
+      <Project>{21e669a6-2d52-4e2d-9b3f-bc1fb90a2735}</Project>
+      <Name>MicroOrms.AdoNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MicroOrms.Dapper\MicroOrms.Dapper.csproj">
       <Project>{36ccc191-e3ce-4c59-aaed-8feda8b44db4}</Project>
       <Name>MicroOrms.Dapper</Name>
