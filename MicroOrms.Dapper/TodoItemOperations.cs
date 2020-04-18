@@ -25,7 +25,7 @@ namespace MicroOrms.Dapper
             using (var connection = new SqlConnection(dbConnectionString))
             {
                 connection.Execute(insertCommand, todoItem);
-                var createdTodoItem = connection.QueryFirst<TodoItem>("SELECT id Id, name Name, is_complete IsComplete, user_id UserId FROM todo_item WHERE name = @Name and is_complete = @IsComplete", todoItem);
+                var createdTodoItem = connection.QueryFirst<TodoItem>("SELECT id Id, name Name, is_complete IsComplete, user_id UserId FROM todo_item WHERE name = @Name and is_complete = @IsComplete and user_id = @UserId", todoItem);
                 return createdTodoItem.Id;
             }
         }
