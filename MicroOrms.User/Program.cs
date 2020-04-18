@@ -68,6 +68,7 @@ namespace MicroOrms.User
                 if (Enum.IsDefined(typeof(OrmType), userInputAsInt))
                 {
                     OrmType = (OrmType)Enum.ToObject(typeof(OrmType), userInputAsInt);
+                    return;
                 }
                 OrmType = OrmType.Dapper;
             }
