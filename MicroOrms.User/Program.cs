@@ -36,7 +36,7 @@ namespace MicroOrms.User
             PrintUser(createdUser);
             TodoDatabase.TodoItems.Create(new TodoItem { Name = "Item3", IsComplete = false, UserId = createdUserId });
             TodoDatabase.TodoItems.Create(new TodoItem { Name = "Item4", IsComplete = true, UserId = createdUserId });
-            PrintUser(createdUser);
+            PrintUser(TodoDatabase.Users.Read(createdUserId));
             createdUser.Name = "user_03";
             TodoDatabase.Users.Update(createdUser);
             PrintAllUsers(TodoDatabase.Users.ReadAll());
