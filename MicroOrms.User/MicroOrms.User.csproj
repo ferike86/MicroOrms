@@ -75,6 +75,10 @@
       <Project>{36ccc191-e3ce-4c59-aaed-8feda8b44db4}</Project>
       <Name>MicroOrms.Dapper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MicroOrms.LinqToDb\MicroOrms.LinqToDb.csproj">
+      <Project>{356f8209-3fa0-4625-ac20-a4f7fba06371}</Project>
+      <Name>MicroOrms.LinqToDb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MicroOrms\MicroOrms.csproj">
       <Project>{8f64f8cb-9810-485d-9478-7ba2f3fd8d9c}</Project>
       <Name>MicroOrms</Name>

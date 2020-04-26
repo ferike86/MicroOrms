@@ -4,6 +4,7 @@
     {
         Dapper,
         DapperContrib,
-        AdoNet
+        AdoNet,
+        LinqToDb
     }
 }
