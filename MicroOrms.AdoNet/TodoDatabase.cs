@@ -11,7 +11,7 @@ namespace MicroOrms.AdoNet
             this.dbConnectionString = dbConnectionString;
         }
 
-        public ICrudOperations<User> Users => new UserOperations(dbConnectionString);
+        public ICrudOperations<User> Users => new UserOperations(dbConnectionString, TodoItems);
 
         public ICrudOperations<TodoItem> TodoItems => new TodoItemOperations(dbConnectionString);
     }

@@ -127,7 +127,7 @@ namespace MicroOrms.AdoNet
             }
         }
 
-        private static TodoItem ReadTodoItem(IDataReader dataReader)
+        internal static TodoItem ReadTodoItem(IDataReader dataReader)
         {
             var todoItem = new TodoItem()
             {
