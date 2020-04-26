@@ -13,7 +13,7 @@ namespace MicroOrms.Dapper
         private static readonly string deleteUserCommand = "DELETE FROM [user] WHERE id = @Id;";
         private static readonly string deleteTodoItemsCommand = "DELETE FROM todo_item WHERE user_id = @Id;";
         private static readonly string insertUserCommand = "INSERT INTO [user] (name) VALUES (@Name);";
-        private static readonly string updateCommand = "UPDATE [user] SET name = @NAME WHERE id = @Id;";
+        private static readonly string updateCommand = "UPDATE [user] SET name = @Name WHERE id = @Id;";
 
         private readonly string dbConnectionString;
 
