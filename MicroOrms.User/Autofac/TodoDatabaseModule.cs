@@ -5,7 +5,7 @@ namespace MicroOrms.User.Autofac
 {
     public class TodoDatabaseModule : Module
     {
-        private static string DbConnectionString => ConfigurationManager.ConnectionStrings["TodoDatabase"].ConnectionString;
+        private static ConnectionStringSettings DbConfiguration => ConfigurationManager.ConnectionStrings["TodoDatabase"];
 
         public OrmType OrmType { get; set; } = OrmType.Dapper;
 
@@ -18,19 +18,19 @@ namespace MicroOrms.User.Autofac
             switch (OrmType)
             {
                 case OrmType.Dapper:
-                    todoDatabase = new Dapper.TodoDatabase(DbConnectionString);
+                    todoDatabase = new Dapper.TodoDatabase(DbConfiguration.ConnectionString);
                     break;
                 case OrmType.DapperContrib:
-                    todoDatabase = new Dapper.Contrib.TodoDatabase(DbConnectionString);
+                    todoDatabase = new Dapper.Contrib.TodoDatabase(DbConfiguration.ConnectionString);
                     break;
                 case OrmType.AdoNet:
-                    todoDatabase = new AdoNet.TodoDatabase(DbConnectionString);
+                    todoDatabase = new AdoNet.TodoDatabase(DbConfiguration.ConnectionString);
                     break;
                 case OrmType.LinqToDb:
-                    todoDatabase = new LinqToDb.TodoDatabase(DbConnectionString);
+                    todoDatabase = new LinqToDb.TodoDatabase(DbConfiguration.Name);
                     break;
                 default:
-                    todoDatabase = new Dapper.TodoDatabase(DbConnectionString);
+                    todoDatabase = new Dapper.TodoDatabase(DbConfiguration.ConnectionString);
                     break;
             }
             builder.RegisterInstance(todoDatabase).As<ITodoDatabase>();

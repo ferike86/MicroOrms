@@ -1,41 +1,97 @@
-﻿using MicroOrms.Entities;
-using System;
+﻿using AutoMapper;
+using LinqToDB;
+using MicroOrms.Entities;
+using MicroOrms.LinqToDb.Entities;
+using MicroOrms.LinqToDb.Mappers;
 using System.Collections.Generic;
+using System.Linq;
+using System.Transactions;
 
 namespace MicroOrms.LinqToDb
 {
     public class UserOperations : ICrudOperations<User>
     {
-        private readonly string dbConnectionString;
+        private static readonly IMapper userMapper = UserMapper.Mapper;
+        private readonly string dbConfigurationName;
 
-        public UserOperations(string dbConnectionString)
+        public UserOperations(string dbConfigurationName)
         {
-            this.dbConnectionString = dbConnectionString;
+            this.dbConfigurationName = dbConfigurationName;
         }
 
-        public long Create(User entity)
+        public long Create(User user)
         {
-            throw new NotImplementedException();
+            using (var linqToDbTodoDatabase = new LinqToDbTodoDatabase(dbConfigurationName))
+            {
+                return linqToDbTodoDatabase.InsertWithInt64Identity(userMapper.Map<LinqToDbUser>(user));
+            }
         }
 
         public bool Delete(long id)
         {
-            throw new NotImplementedException();
+            using (var transaction = new TransactionScope())
+            {
+                using (var linqToDbTodoDatabase = new LinqToDbTodoDatabase(dbConfigurationName))
+                {
+                    linqToDbTodoDatabase.TodoItems.Where(t => t.User_Id == id).Delete();
+                    var affectedRows = linqToDbTodoDatabase.Users.Where(u => u.Id == id).Delete();
+
+                    transaction.Complete();
+
+                    return affectedRows > 0;
+                }
+            }
         }
 
         public User Read(long id)
         {
-            throw new NotImplementedException();
+            using (var transaction = new TransactionScope())
+            {
+                using (var linqToDbTodoDatabase = new LinqToDbTodoDatabase(dbConfigurationName))
+                {
+                    var user = linqToDbTodoDatabase.Users.Where(u => u.Id == id).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        user.TodoItems = linqToDbTodoDatabase.TodoItems.Where(t => t.User_Id == id).ToList();
+                    }
+
+                    transaction.Complete();
+
+                    return userMapper.Map<User>(user);
+                }
+            }
         }
 
         public IEnumerable<User> ReadAll()
         {
-            throw new NotImplementedException();
+            using (var transaction = new TransactionScope())
+            {
+                using (var linqToDbTodoDatabase = new LinqToDbTodoDatabase(dbConfigurationName))
+                {
+                    var userList = linqToDbTodoDatabase.Users.ToList();
+                    var todoItemList = linqToDbTodoDatabase.TodoItems.ToList();
+
+                    transaction.Complete();
+
+                    return userMapper.Map<IEnumerable<User>>(userList.Select(user => SelectTodoItems(user, todoItemList)));
+                }
+            }
         }
 
-        public bool Update(User entity)
+        public bool Update(User user)
         {
-            throw new NotImplementedException();
+            using (var linqToDbTodoDatabase = new LinqToDbTodoDatabase(dbConfigurationName))
+            {
+                return linqToDbTodoDatabase.Update(userMapper.Map<LinqToDbUser>(user)) > 0;
+            }
+        }
+
+        private LinqToDbUser SelectTodoItems(LinqToDbUser user, IEnumerable<LinqToDbTodoItem> todoItems)
+        {
+            var todoItemsToAdd = todoItems.Where(todoItem => todoItem.User_Id == user.Id);
+            user.TodoItems = todoItemsToAdd.ToList();
+            return user;
         }
     }
 }

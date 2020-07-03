@@ -4,15 +4,15 @@ namespace MicroOrms.LinqToDb
 {
     public class TodoDatabase : ITodoDatabase
     {
-        private readonly string dbConnectionString;
+        private readonly string dbConfigurationName;
 
-        public TodoDatabase(string dbConnectionString)
+        public TodoDatabase(string dbConfigurationName)
         {
-            this.dbConnectionString = dbConnectionString;
+            this.dbConfigurationName = dbConfigurationName;
         }
 
-        public ICrudOperations<User> Users => new UserOperations(dbConnectionString);
+        public ICrudOperations<User> Users => new UserOperations(dbConfigurationName);
 
-        public ICrudOperations<TodoItem> TodoItems => new TodoItemOperations(dbConnectionString);
+        public ICrudOperations<TodoItem> TodoItems => new TodoItemOperations(dbConfigurationName);
     }
 }
