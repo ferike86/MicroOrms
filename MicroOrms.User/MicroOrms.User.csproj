@@ -79,6 +79,10 @@
       <Project>{356f8209-3fa0-4625-ac20-a4f7fba06371}</Project>
       <Name>MicroOrms.LinqToDb</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MicroOrms.SqlFu\MicroOrms.SqlFu.csproj">
+      <Project>{ef36c70c-034a-4528-971a-9abca9a37b11}</Project>
+      <Name>MicroOrms.SqlFu</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MicroOrms\MicroOrms.csproj">
       <Project>{8f64f8cb-9810-485d-9478-7ba2f3fd8d9c}</Project>
       <Name>MicroOrms</Name>

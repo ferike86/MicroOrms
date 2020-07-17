@@ -29,6 +29,9 @@ namespace MicroOrms.User.Autofac
                 case OrmType.LinqToDb:
                     todoDatabase = new LinqToDb.TodoDatabase(DbConfiguration.Name);
                     break;
+                case OrmType.SqlFu:
+                    todoDatabase = new SqlFu.TodoDatabase(DbConfiguration.ConnectionString);
+                    break;
                 default:
                     todoDatabase = new Dapper.TodoDatabase(DbConfiguration.ConnectionString);
                     break;
