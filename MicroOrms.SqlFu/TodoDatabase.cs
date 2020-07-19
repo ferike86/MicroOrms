@@ -22,6 +22,12 @@ namespace MicroOrms.SqlFu
                     info.Property(t => t.IsComplete).MapToColumn("is_complete");
                     info.Property(t => t.UserId).MapToColumn("user_id");
                 });
+                cfg.ConfigureTableForPoco<User>(info =>
+                {
+                    info.TableName = new TableName("user");
+                    info.Property(u => u.Id).IsAutoincremented();
+                    info.IgnoreProperties(u => u.TodoItems);
+                });
             });
             dbFactory = SqlFuManager.GetDbFactory();
         }
