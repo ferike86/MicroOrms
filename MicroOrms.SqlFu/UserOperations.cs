@@ -1,4 +1,5 @@
 ﻿using MicroOrms.Entities;
+using SqlFu;
 using System;
 using System.Collections.Generic;
 
@@ -6,11 +7,11 @@ namespace MicroOrms.SqlFu
 {
     public class UserOperations : ICrudOperations<User>
     {
-        private readonly string dbConnectionString;
+        private readonly IDbFactory dbFactory;
 
-        public UserOperations(string dbConnectionString)
+        public UserOperations(IDbFactory dbFactory)
         {
-            this.dbConnectionString = dbConnectionString;
+            this.dbFactory = dbFactory;
         }
 
         public long Create(User user)
