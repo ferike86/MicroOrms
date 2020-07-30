@@ -32,6 +32,9 @@ namespace MicroOrms.User.Autofac
                 case OrmType.SqlFu:
                     todoDatabase = new SqlFu.TodoDatabase(DbConfiguration.ConnectionString);
                     break;
+                case OrmType.EntityFramework:
+                    todoDatabase = new EntityFramework.TodoDatabase(DbConfiguration.ConnectionString);
+                    break;
                 default:
                     todoDatabase = new Dapper.TodoDatabase(DbConfiguration.ConnectionString);
                     break;

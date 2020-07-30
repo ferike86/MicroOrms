@@ -6,6 +6,7 @@
         DapperContrib,
         AdoNet,
         LinqToDb,
-        SqlFu
+        SqlFu,
+        EntityFramework
     }
 }
