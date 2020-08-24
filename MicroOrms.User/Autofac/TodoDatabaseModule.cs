@@ -7,6 +7,8 @@ namespace MicroOrms.User.Autofac
     {
         private static ConnectionStringSettings DbConfiguration => ConfigurationManager.ConnectionStrings["TodoDatabase"];
 
+        private static ConnectionStringSettings EntityFrameworkDbConfiguration => ConfigurationManager.ConnectionStrings["TodoContext"];
+
         public OrmType OrmType { get; set; } = OrmType.Dapper;
 
         protected override void Load(ContainerBuilder builder)
@@ -33,7 +35,7 @@ namespace MicroOrms.User.Autofac
                     todoDatabase = new SqlFu.TodoDatabase(DbConfiguration.ConnectionString);
                     break;
                 case OrmType.EntityFramework:
-                    todoDatabase = new EntityFramework.TodoDatabase(DbConfiguration.ConnectionString);
+                    todoDatabase = new EntityFramework.TodoDatabase(EntityFrameworkDbConfiguration.ConnectionString);
                     break;
                 default:
                     todoDatabase = new Dapper.TodoDatabase(DbConfiguration.ConnectionString);

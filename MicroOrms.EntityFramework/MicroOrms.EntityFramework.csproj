@@ -31,8 +31,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,9 +53,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mappers\TodoItemMapper.cs" />
+    <Compile Include="Mappers\UserMapper.cs" />
+    <Compile Include="TodoContext.cs" />
     <Compile Include="TodoDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TodoItemOperations.cs" />
+    <Compile Include="TodoModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TodoModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TodoModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TodoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TodoModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TodoModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="todo_item.cs">
+      <DependentUpon>TodoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="user.cs">
+      <DependentUpon>TodoModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="UserOperations.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +87,34 @@
       <Project>{8f64f8cb-9810-485d-9478-7ba2f3fd8d9c}</Project>
       <Name>MicroOrms</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="TodoModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>TodoModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="packages.config" />
+    <None Include="TodoModel.edmx.diagram">
+      <DependentUpon>TodoModel.edmx</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TodoModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TodoModel.Context.cs</LastGenOutput>
+      <DependentUpon>TodoModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="TodoModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TodoModel.edmx</DependentUpon>
+      <LastGenOutput>TodoModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
