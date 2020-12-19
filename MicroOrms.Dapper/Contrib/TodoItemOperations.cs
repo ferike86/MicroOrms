@@ -3,24 +3,25 @@ using Dapper.Contrib.Extensions;
 using MicroOrms.Dapper.Contrib.Entities;
 using MicroOrms.Dapper.Contrib.Mappers;
 using MicroOrms.Entities;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 
 namespace MicroOrms.Dapper.Contrib
 {
     public class TodoItemOperations : ICrudOperations<TodoItem>
     {
         private static readonly IMapper mapper = TodoItemMapper.Mapper;
-        private readonly string dbConnectionString;
+        private Func<IDbConnection> ConnectionFactory { get; }
 
-        public TodoItemOperations(string dbConnectionString)
+        public TodoItemOperations(Func<IDbConnection> connectionFactory)
         {
-            this.dbConnectionString = dbConnectionString;
+            ConnectionFactory = connectionFactory;
         }
 
         public long Create(TodoItem todoItem)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Insert(mapper.Map<DapperContribTodoItem>(todoItem));
             }
@@ -28,7 +29,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public bool Delete(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 var todoItemToDelete = connection.Get<DapperContribTodoItem>(id);
                 return connection.Delete(todoItemToDelete);
@@ -37,7 +38,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public TodoItem Read(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return mapper.Map<TodoItem>(connection.Get<DapperContribTodoItem>(id));
             }
@@ -45,7 +46,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public IEnumerable<TodoItem> ReadAll()
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return mapper.Map<IEnumerable<TodoItem>>(connection.GetAll<DapperContribTodoItem>());
             }
@@ -53,7 +54,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public bool Update(TodoItem todoItem)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Update(mapper.Map<DapperContribTodoItem>(todoItem));
             }

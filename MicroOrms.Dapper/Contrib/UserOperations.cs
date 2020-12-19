@@ -3,8 +3,9 @@ using Dapper.Contrib.Extensions;
 using MicroOrms.Dapper.Contrib.Entities;
 using MicroOrms.Dapper.Contrib.Mappers;
 using MicroOrms.Entities;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 
 namespace MicroOrms.Dapper.Contrib
@@ -12,16 +13,16 @@ namespace MicroOrms.Dapper.Contrib
     public class UserOperations : ICrudOperations<User>
     {
         private static readonly IMapper userMapper = UserMapper.Mapper;
-        private readonly string dbConnectionString;
+        private Func<IDbConnection> ConnectionFactory { get; }
 
-        public UserOperations(string dbConnectionString)
+        public UserOperations(Func<IDbConnection> connectionFactory)
         {
-            this.dbConnectionString = dbConnectionString;
+            ConnectionFactory = connectionFactory;
         }
 
         public long Create(User user)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Insert(userMapper.Map<DapperContribUser>(user));
             }
@@ -29,7 +30,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public bool Delete(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
 
@@ -50,7 +51,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public User Read(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
 
@@ -69,7 +70,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public IEnumerable<User> ReadAll()
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
 
@@ -87,7 +88,7 @@ namespace MicroOrms.Dapper.Contrib
 
         public bool Update(User user)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Update(userMapper.Map<DapperContribUser>(user));
             }

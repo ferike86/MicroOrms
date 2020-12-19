@@ -1,7 +1,9 @@
 ﻿using MicroOrms.Entities;
 using SqlFu;
 using SqlFu.Configuration;
+using SqlFu.Providers.Sqlite;
 using SqlFu.Providers.SqlServer;
+using System;
 using System.Data.SqlClient;
 
 namespace MicroOrms.SqlFu
@@ -10,11 +12,21 @@ namespace MicroOrms.SqlFu
     {
         private readonly IDbFactory dbFactory;
 
-        public TodoDatabase(string dbConnectionString)
+        public TodoDatabase(ProviderType providerType, string dbConnectionString)
         {
             SqlFuManager.Configure(cfg =>
             {
-                cfg.AddProfile(new SqlServer2012Provider(SqlClientFactory.Instance.CreateConnection), dbConnectionString);
+                switch(providerType)
+                {
+                    case ProviderType.SqlServer2012:
+                        cfg.AddProfile(new SqlServer2012Provider(SqlClientFactory.Instance.CreateConnection), dbConnectionString);
+                        break;
+                    case ProviderType.Sqlite:
+                        cfg.AddProfile(new SqliteProvider(SqlClientFactory.Instance.CreateConnection), dbConnectionString);
+                        break;
+                    default:
+                        throw new ArgumentException("Not supported provider type", nameof(providerType));
+                }
                 cfg.ConfigureTableForPoco<TodoItem>(info =>
                 {
                     info.TableName = new TableName("todo_item");

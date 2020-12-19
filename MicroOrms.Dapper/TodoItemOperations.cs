@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using MicroOrms.Entities;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 
 namespace MicroOrms.Dapper
 {
@@ -13,16 +14,16 @@ namespace MicroOrms.Dapper
         private static readonly string insertCommand = "INSERT INTO todo_item (name, is_complete, user_id) VALUES (@Name, @IsComplete, @UserId);";
         private static readonly string updateCommand = "UPDATE todo_item SET name = @Name, is_complete = @IsComplete, user_id = @UserId WHERE id = @Id;";
 
-        private readonly string dbConnectionString;
+        private Func<IDbConnection> ConnectionFactory { get; }
 
-        public TodoItemOperations(string dbConnectionString)
+        public TodoItemOperations(Func<IDbConnection> connectionFactory)
         {
-            this.dbConnectionString = dbConnectionString;
+            ConnectionFactory = connectionFactory;
         }
 
         public long Create(TodoItem todoItem)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Execute(insertCommand, todoItem);
                 var createdTodoItem = connection.QueryFirst<TodoItem>("SELECT id Id, name Name, is_complete IsComplete, user_id UserId FROM todo_item WHERE name = @Name and is_complete = @IsComplete and user_id = @UserId", todoItem);
@@ -32,7 +33,7 @@ namespace MicroOrms.Dapper
 
         public bool Delete(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Execute(deleteCommand, new { Id = id }) > 0;
             }
@@ -40,7 +41,7 @@ namespace MicroOrms.Dapper
 
         public TodoItem Read(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.QueryFirst<TodoItem>(readCommand, new { Id = id });
             }
@@ -48,7 +49,7 @@ namespace MicroOrms.Dapper
 
         public IEnumerable<TodoItem> ReadAll()
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Query<TodoItem>(readAllCommand);
             }
@@ -56,7 +57,7 @@ namespace MicroOrms.Dapper
 
         public bool Update(TodoItem todoItem)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Execute(updateCommand, todoItem) > 0;
             }

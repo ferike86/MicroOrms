@@ -1,18 +1,20 @@
 ﻿using MicroOrms.Entities;
+using System;
+using System.Data;
 
 namespace MicroOrms.AdoNet
 {
     public class TodoDatabase : ITodoDatabase
     {
-        private readonly string dbConnectionString;
+        private Func<IDbConnection> ConnectionFactory { get; }
 
-        public TodoDatabase(string dbConnectionString)
+        public TodoDatabase(Func<IDbConnection> connectionFactory)
         {
-            this.dbConnectionString = dbConnectionString;
+            ConnectionFactory = connectionFactory;
         }
 
-        public ICrudOperations<User> Users => new UserOperations(dbConnectionString, TodoItems);
+        public ICrudOperations<User> Users => new UserOperations(ConnectionFactory, TodoItems);
 
-        public ICrudOperations<TodoItem> TodoItems => new TodoItemOperations(dbConnectionString);
+        public ICrudOperations<TodoItem> TodoItems => new TodoItemOperations(ConnectionFactory);
     }
 }

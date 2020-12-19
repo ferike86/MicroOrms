@@ -1,11 +1,11 @@
 ﻿using MicroOrms.Entities;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace MicroOrms.AdoNet
 {
-    public class TodoItemOperations : ICrudOperations<TodoItem>
+    public class TodoItemOperations : CrudOperationsBase, ICrudOperations<TodoItem>
     {
         private static readonly string readAllCommand = "SELECT * FROM todo_item;";
         private static readonly string readCommand = "SELECT * FROM todo_item WHERE id = @Id;";
@@ -13,31 +13,33 @@ namespace MicroOrms.AdoNet
         private static readonly string insertCommand = "INSERT INTO todo_item (name, is_complete, user_id) VALUES (@Name, @IsComplete, @UserId);";
         private static readonly string updateCommand = "UPDATE todo_item SET name = @Name, is_complete = @IsComplete, user_id = @UserId WHERE id = @Id;";
 
-        private readonly string dbConnectionString;
+        private Func<IDbConnection> ConnectionFactory { get; }
 
-        public TodoItemOperations(string dbConnectionString)
+        public TodoItemOperations(Func<IDbConnection> connectionFactory)
         {
-            this.dbConnectionString = dbConnectionString;
+            ConnectionFactory = connectionFactory;
         }
 
         public long Create(TodoItem todoItem)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
-                using (var command = new SqlCommand(insertCommand, connection))
+                using (var command = connection.CreateCommand())
                 {
-                    command.Parameters.AddWithValue("Name", todoItem.Name);
-                    command.Parameters.AddWithValue("IsComplete", todoItem.IsComplete);
-                    command.Parameters.AddWithValue("UserId", todoItem.UserId);
+                    command.CommandText = insertCommand;
+                    command.Parameters.Add(CreateParameter(command, "Name", todoItem.Name));
+                    command.Parameters.Add(CreateParameter(command, "IsComplete", todoItem.IsComplete));
+                    command.Parameters.Add(CreateParameter(command, "UserId", todoItem.UserId));
                     command.ExecuteNonQuery();
                 }
 
-                using (var command = new SqlCommand("SELECT * FROM todo_item WHERE name = @Name and is_complete = @IsComplete and user_id = @UserId", connection))
+                using (var command = connection.CreateCommand())
                 {
-                    command.Parameters.AddWithValue("Name", todoItem.Name);
-                    command.Parameters.AddWithValue("IsComplete", todoItem.IsComplete);
-                    command.Parameters.AddWithValue("UserId", todoItem.UserId);
+                    command.CommandText = "SELECT * FROM todo_item WHERE name = @Name and is_complete = @IsComplete and user_id = @UserId";
+                    command.Parameters.Add(CreateParameter(command, "Name", todoItem.Name));
+                    command.Parameters.Add(CreateParameter(command, "IsComplete", todoItem.IsComplete));
+                    command.Parameters.Add(CreateParameter(command, "UserId", todoItem.UserId));
 
                     using (var dataReader = command.ExecuteReader())
                     {
@@ -50,12 +52,13 @@ namespace MicroOrms.AdoNet
 
         public bool Delete(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
-                using (var command = new SqlCommand(deleteCommand, connection))
+                using (var command = connection.CreateCommand())
                 {
-                    command.Parameters.AddWithValue("Id", id);
+                    command.CommandText = deleteCommand;
+                    command.Parameters.Add(CreateParameter(command, "Id", id));
                     return command.ExecuteNonQuery() > 0;
                 }
             }
@@ -63,18 +66,19 @@ namespace MicroOrms.AdoNet
 
         public TodoItem Read(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
-                using (var command = new SqlCommand(readCommand, connection))
+                using (var command = connection.CreateCommand())
                 {
-                    command.Parameters.AddWithValue("Id", id);
+                    command.CommandText = readCommand;
+                    command.Parameters.Add(CreateParameter(command, "Id", id));
 
                     using (var dataReader = command.ExecuteReader())
                     {
-                        if (dataReader.HasRows)
+                        var hasMoreRows = dataReader.Read();
+                        if (hasMoreRows)
                         {
-                            dataReader.Read();
                             return ReadTodoItem(dataReader);
                         }
                         else
@@ -88,21 +92,19 @@ namespace MicroOrms.AdoNet
 
         public IEnumerable<TodoItem> ReadAll()
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
-                using (var command = new SqlCommand(readAllCommand, connection))
+                using (var command = connection.CreateCommand())
                 {
+                    command.CommandText = readAllCommand;
                     var todoItemList = new List<TodoItem>();
 
                     using (var dataReader = command.ExecuteReader())
                     {
-                        if (dataReader.HasRows)
+                        while (dataReader.Read())
                         {
-                            while (dataReader.Read())
-                            {
-                                todoItemList.Add(ReadTodoItem(dataReader));
-                            }
+                            todoItemList.Add(ReadTodoItem(dataReader));
                         }
                     }
 
@@ -113,15 +115,16 @@ namespace MicroOrms.AdoNet
 
         public bool Update(TodoItem todoItem)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
-                using (var command = new SqlCommand(updateCommand, connection))
+                using (var command = connection.CreateCommand())
                 {
-                    command.Parameters.AddWithValue("Id", todoItem.Id);
-                    command.Parameters.AddWithValue("Name", todoItem.Name);
-                    command.Parameters.AddWithValue("IsComplete", todoItem.IsComplete);
-                    command.Parameters.AddWithValue("UserId", todoItem.UserId);
+                    command.CommandText = updateCommand;
+                    command.Parameters.Add(CreateParameter(command, "Id", todoItem.Id));
+                    command.Parameters.Add(CreateParameter(command, "Name", todoItem.Name));
+                    command.Parameters.Add(CreateParameter(command, "IsComplete", todoItem.IsComplete));
+                    command.Parameters.Add(CreateParameter(command, "UserId", todoItem.UserId));
                     return command.ExecuteNonQuery() > 0;
                 }
             }

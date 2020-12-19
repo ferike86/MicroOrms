@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using MicroOrms.Entities;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 
 namespace MicroOrms.Dapper
@@ -15,16 +16,16 @@ namespace MicroOrms.Dapper
         private static readonly string insertUserCommand = "INSERT INTO [user] (name) VALUES (@Name);";
         private static readonly string updateCommand = "UPDATE [user] SET name = @Name WHERE id = @Id;";
 
-        private readonly string dbConnectionString;
+        private Func<IDbConnection> ConnectionFactory { get; }
 
-        public UserOperations(string dbConnectionString)
+        public UserOperations(Func<IDbConnection> connectionFactory)
         {
-            this.dbConnectionString = dbConnectionString;
+            ConnectionFactory = connectionFactory;
         }
 
         public long Create(User user)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Execute(insertUserCommand, user);
                 var createdUser = connection.QueryFirst<User>("SELECT id Id, name Name FROM [user] WHERE name = @Name", user);
@@ -34,7 +35,7 @@ namespace MicroOrms.Dapper
 
         public bool Delete(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 connection.Open();
 
@@ -52,7 +53,7 @@ namespace MicroOrms.Dapper
 
         public User Read(long id)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 var result = connection.QueryMultiple(readCommand, new { Id = id });
                 var user = result.ReadSingle<User>();
@@ -63,7 +64,7 @@ namespace MicroOrms.Dapper
 
         public IEnumerable<User> ReadAll()
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 var userDictionary = new Dictionary<long, User>();
 
@@ -88,7 +89,7 @@ namespace MicroOrms.Dapper
 
         public bool Update(User user)
         {
-            using (var connection = new SqlConnection(dbConnectionString))
+            using (var connection = ConnectionFactory())
             {
                 return connection.Execute(updateCommand, user) > 0;
             }
